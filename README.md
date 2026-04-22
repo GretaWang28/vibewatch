@@ -5,19 +5,23 @@ A content-based movie and TV show recommender built on the Netflix dataset (~8,8
 ---
 
 ## Quick Start
-Download `netflix_data.csv` and place it in the project root.
-
+1. Download `netflix_data.csv` and place it in the project root.
+2. Create a `.env` file in the project folder:
+```
+OPENAI_API_KEY=sk-...your_key_here
+```
+3. Run Docker
 ```bash
 docker build -t movie-recommender .
 docker run -p 8080:80 --env-file .env movie-recommender
 ```
-
-Create a `.env` file in the project folder:
+or
+```bash
+docker build -t movie-recommender .
+docker run -p 8080:80 -e OPENAI_API_KEY=your_key_here movie-recommender
 ```
-OPENAI_API_KEY=sk-...your_key_here
-```
 
-Then open **http://localhost:8080**
+4. Then open **http://localhost:8080**
 
 > **First run only:** embeds all 8,807 titles via OpenAI (~2 minutes). All subsequent runs load from cache and start instantly.
 
