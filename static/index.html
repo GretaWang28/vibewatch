@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>VibeWatch</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:      #080808;
+  --surface: #0f0f0f;
+  --card:    #141414;
+  --border:  #222;
+  --accent:  #e50914;
+  --gold:    #f5c518;
+  --white:   #ffffff;
+  --gray:    #999;
+  --light:   #ccc;
+}
+
+html, body {
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--white);
+  font-family: 'Outfit', sans-serif;
+  overflow-x: hidden;
+}
+
+/* ── Header ── */
+header {
+  padding: 2rem 2.5rem 1.5rem;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: baseline;
+  gap: 1rem;
+}
+
+.logo {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 3.5rem;
+  letter-spacing: 0.05em;
+  line-height: 1;
+  color: var(--white);
+}
+
+.logo span { color: var(--accent); }
+
+.tagline {
+  font-size: 0.75rem;
+  font-weight: 300;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--gray);
+}
+
+/* ── Layout ── */
+.layout {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  min-height: calc(100vh - 90px);
+}
+
+/* ── Sidebar ── */
+.sidebar {
+  border-right: 1px solid var(--border);
+  padding: 1.5rem;
+  position: sticky;
+  top: 0;
+  height: calc(100vh - 90px);
+  overflow-y: auto;
+  background: var(--surface);
+}
+
+.sidebar::-webkit-scrollbar { width: 2px; }
+.sidebar::-webkit-scrollbar-thumb { background: var(--border); }
+
+.filter-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.filter-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.1rem;
+  letter-spacing: 0.1em;
+  color: var(--white);
+}
+
+.filter-badge {
+  background: var(--accent);
+  color: white;
+  font-size: 0.6rem;
+  font-weight: 600;
+  padding: 0.15rem 0.4rem;
+  border-radius: 100px;
+  margin-left: 0.4rem;
+}
+
+.clear-btn {
+  font-size: 0.65rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: 'Outfit', sans-serif;
+  font-weight: 500;
+  opacity: 0.8;
+  transition: opacity 0.15s;
+}
+.clear-btn:hover { opacity: 1; }
+
+.filter-section { margin-bottom: 1.4rem; }
+
+.filter-label {
+  font-size: 0.6rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gold);
+  display: block;
+  margin-bottom: 0.6rem;
+}
+
+/* Type toggle */
+.type-toggle {
+  display: flex;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.type-btn {
+  flex: 1;
+  background: transparent;
+  border: none;
+  padding: 0.55rem;
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--gray);
+  cursor: pointer;
+  transition: all 0.15s;
+  letter-spacing: 0.05em;
+}
+
+.type-btn.active { background: var(--accent); color: white; }
+.type-btn:not(.active):hover { color: var(--white); }
+
+/* Year */
+.year-row { display: flex; gap: 0.5rem; align-items: center; }
+.year-sep { color: var(--gray); font-size: 0.8rem; }
+
+.year-input, .filter-input {
+  background: var(--card);
+  border: 1px solid var(--border);
+  color: var(--white);
+  padding: 0.5rem 0.7rem;
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.8rem;
+  border-radius: 3px;
+  outline: none;
+  width: 100%;
+  transition: border-color 0.15s;
+}
+.year-input { width: auto; flex: 1; }
+.year-input:focus, .filter-input:focus { border-color: var(--accent); }
+.filter-input::placeholder, .year-input::placeholder { color: #444; }
+
+/* Chips */
+.chips { display: flex; flex-wrap: wrap; gap: 0.35rem; }
+
+.chip {
+  font-size: 0.62rem;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  padding: 0.25rem 0.55rem;
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  cursor: pointer;
+  color: var(--gray);
+  background: transparent;
+  font-family: 'Outfit', sans-serif;
+  transition: all 0.15s;
+}
+.chip:hover { color: var(--white); border-color: #444; }
+.chip.active { background: var(--accent); border-color: var(--accent); color: white; }
+
+/* ── Main ── */
+.main { padding: 2rem 2.5rem; }
+
+/* Search bar */
+.search-wrap {
+  display: flex;
+  border: 2px solid var(--border);
+  border-radius: 3px;
+  overflow: hidden;
+  transition: border-color 0.2s;
+  background: var(--card);
+}
+.search-wrap:focus-within { border-color: var(--accent); }
+
+#query {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  padding: 1rem 1.2rem;
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.95rem;
+  color: var(--white);
+  font-weight: 300;
+}
+#query::placeholder { color: #444; }
+
+#submit {
+  background: var(--accent);
+  color: white;
+  border: none;
+  padding: 0 2rem;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.1rem;
+  letter-spacing: 0.12em;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+#submit:hover { background: #c40812; }
+#submit:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* Hints */
+.hints { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 0.8rem; }
+.hint {
+  font-size: 0.7rem;
+  color: var(--gray);
+  border: 1px solid var(--border);
+  padding: 0.3rem 0.7rem;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: all 0.15s;
+  font-weight: 400;
+}
+.hint:hover { color: var(--white); border-color: var(--accent); }
+
+/* Status */
+#status {
+  margin-top: 1.2rem;
+  font-size: 0.78rem;
+  color: var(--gray);
+  font-weight: 300;
+  min-height: 1.2em;
+  letter-spacing: 0.03em;
+}
+
+.spinner {
+  display: inline-block;
+  width: 10px; height: 10px;
+  border: 2px solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+  margin-right: 0.5rem;
+  vertical-align: middle;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Parsed query box */
+#parsed-box {
+  margin-top: 1rem;
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  background: var(--card);
+  padding: 1rem 1.2rem;
+  display: none;
+  border-radius: 0 3px 3px 0;
+}
+.parsed-title {
+  font-size: 0.58rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gray);
+  margin-bottom: 0.6rem;
+}
+.parsed-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem 1.5rem; }
+.parsed-label {
+  font-size: 0.58rem;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 0.15rem;
+}
+.parsed-value { font-size: 0.78rem; color: var(--light); line-height: 1.5; font-weight: 300; }
+.parsed-value.empty { color: #444; font-style: italic; }
+
+/* Results grid */
+#results { margin-top: 1.5rem; display: flex; flex-direction: column; gap: 2px; }
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-left: 3px solid transparent;
+  padding: 1.2rem 1.4rem;
+  display: grid;
+  grid-template-columns: 3rem 1fr;
+  gap: 0 1.2rem;
+  align-items: start;
+  opacity: 0;
+  transform: translateY(6px);
+  animation: rise 0.25s ease forwards;
+  transition: border-color 0.15s, background 0.15s;
+  cursor: default;
+}
+.card:hover { border-left-color: var(--accent); background: #1a1a1a; }
+@keyframes rise { to { opacity: 1; transform: translateY(0); } }
+
+.card-rank {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 2.2rem;
+  color: #2a2a2a;
+  line-height: 1;
+  text-align: right;
+  padding-top: 0.1rem;
+}
+
+.card-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.4rem;
+  letter-spacing: 0.05em;
+  color: var(--white);
+  line-height: 1;
+}
+
+.card-meta {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+  margin-top: 0.4rem;
+  align-items: center;
+}
+
+.tag {
+  font-size: 0.6rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0.2rem 0.5rem;
+  border-radius: 2px;
+}
+.tag-type    { background: var(--accent); color: white; }
+.tag-rating  { background: var(--gold); color: #000; }
+.tag-genre   { background: #1e1e1e; color: var(--gray); border: 1px solid var(--border); }
+.tag-year    { background: #1a1a2e; color: #7eb8f7; }
+.tag-country { color: var(--gray); font-size: 0.58rem; }
+
+.card-desc {
+  margin-top: 0.5rem;
+  font-size: 0.8rem;
+  color: var(--gray);
+  line-height: 1.6;
+  font-weight: 300;
+  max-width: 65ch;
+}
+
+/* Score bars — only shown in search mode */
+.score-breakdown { margin-top: 0.75rem; display: flex; flex-direction: column; gap: 0.25rem; }
+.score-row { display: flex; align-items: center; gap: 0.5rem; }
+.score-label {
+  font-size: 0.55rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #555;
+  width: 4rem;
+  flex-shrink: 0;
+}
+.score-track { flex: 1; height: 2px; background: #1e1e1e; border-radius: 1px; overflow: hidden; }
+.score-fill  { height: 100%; border-radius: 1px; transition: width 0.3s ease; }
+.fill-overall  { background: var(--accent); }
+.fill-desc     { background: #7eb8f7; }
+.fill-genres   { background: #7de8a0; }
+.fill-director { background: var(--gold); }
+.fill-cast     { background: #c97ef7; }
+.score-pct { font-size: 0.6rem; color: #555; width: 2rem; text-align: right; font-weight: 500; }
+
+.empty {
+  text-align: center;
+  color: var(--gray);
+  font-size: 0.85rem;
+  padding: 4rem 0;
+  font-weight: 300;
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">Vibe<span>Watch</span></div>
+  <div class="tagline">AI-Powered Movie & Show Discovery</div>
+</header>
+
+<div class="layout">
+  <aside class="sidebar">
+    <div class="filter-header">
+      <span class="filter-title">FILTERS <span id="filter-badge" class="filter-badge" style="display:none"></span></span>
+      <button class="clear-btn" onclick="clearFilters()">Clear all</button>
+    </div>
+
+    <div class="filter-section">
+      <span class="filter-label">Type</span>
+      <div class="type-toggle">
+        <button class="type-btn active" data-type="all"     onclick="setType('all',this)">All</button>
+        <button class="type-btn"        data-type="Movie"   onclick="setType('Movie',this)">Movies</button>
+        <button class="type-btn"        data-type="TV Show" onclick="setType('TV Show',this)">TV Shows</button>
+      </div>
+    </div>
+
+    <div class="filter-section">
+      <span class="filter-label">Release Year</span>
+      <div class="year-row">
+        <input class="year-input" id="year-min" type="number" placeholder="1925" min="1925" max="2021"/>
+        <span class="year-sep">—</span>
+        <input class="year-input" id="year-max" type="number" placeholder="2021" min="1925" max="2021"/>
+      </div>
+    </div>
+
+    <div class="filter-section">
+      <span class="filter-label">Director</span>
+      <input class="filter-input" id="f-director" type="text" placeholder="e.g. Christopher Nolan"/>
+    </div>
+
+    <div class="filter-section">
+      <span class="filter-label">Cast</span>
+      <input class="filter-input" id="f-cast" type="text" placeholder="e.g. Meryl Streep"/>
+    </div>
+
+    <div class="filter-section">
+      <span class="filter-label">Country</span>
+      <input class="filter-input" id="f-country" type="text" placeholder="e.g. Japan"/>
+    </div>
+
+    <div class="filter-section">
+      <span class="filter-label">Rating</span>
+      <div class="chips" id="rating-chips"></div>
+    </div>
+
+    <div class="filter-section">
+      <span class="filter-label">Genre</span>
+      <div class="chips" id="genre-chips"></div>
+    </div>
+  </aside>
+
+  <div class="main">
+    <div class="search-wrap">
+      <input id="query" type="text"
+        placeholder="Describe what you want — mood, theme, story, director…"
+        autocomplete="off" spellcheck="false"/>
+      <button id="submit">Search</button>
+    </div>
+
+    <div class="hints">
+      <span class="hint" onclick="setQuery(this)">dark psychological thriller</span>
+      <span class="hint" onclick="setQuery(this)">directed by Martin Scorsese</span>
+      <span class="hint" onclick="setQuery(this)">feel-good family comedy</span>
+      <span class="hint" onclick="setQuery(this)">starring Meryl Streep</span>
+      <span class="hint" onclick="setQuery(this)">true crime documentary</span>
+    </div>
+
+    <div id="status"></div>
+
+    <div id="parsed-box">
+      <div class="parsed-title">How your query was interpreted</div>
+      <div class="parsed-fields">
+        <div><div class="parsed-label">Themes / Mood</div><div class="parsed-value" id="p-desc">—</div></div>
+        <div><div class="parsed-label">Genres</div><div class="parsed-value" id="p-genres">—</div></div>
+        <div><div class="parsed-label">Director</div><div class="parsed-value" id="p-director">—</div></div>
+        <div><div class="parsed-label">Cast</div><div class="parsed-value" id="p-cast">—</div></div>
+      </div>
+    </div>
+
+    <div id="results"></div>
+  </div>
+</div>
+
+<script>
+  // ── State ──────────────────────────────────────────────────────────────────
+  let activeType    = 'all';
+  let activeGenres  = new Set();
+  let activeRatings = new Set();
+  let lastResults   = [];
+  let allTitles     = [];
+  let isSearchMode  = false;
+  let debounceTimer = null;
+
+  const RATINGS = ['G','TV-G','TV-Y','TV-Y7','PG','TV-PG','PG-13','TV-14','R','TV-MA','NC-17','NR'];
+  const GENRES  = [
+    'Action & Adventure','Children & Family Movies','Comedies','Crime TV Shows',
+    'Documentaries','Docuseries','Dramas','Horror Movies','Independent Movies',
+    'International Movies','International TV Shows',"Kids' TV",'Music & Musicals',
+    'Reality TV','Romantic Movies','Romantic TV Shows','Stand-Up Comedy',
+    'Thrillers','TV Comedies','TV Dramas',
+  ];
+
+  // Load full dataset on page load
+  async function loadAllTitles() {
+    try {
+      const res = await fetch('/titles');
+      allTitles = await res.json();
+      applyClientFilters();
+    } catch(e) { console.error('Failed to load titles', e); }
+  }
+  loadAllTitles();
+
+  // ── Chips ──────────────────────────────────────────────────────────────────
+  function buildChips(containerId, items, store) {
+    const container = document.getElementById(containerId);
+    items.forEach(item => {
+      const btn = document.createElement('button');
+      btn.className = 'chip';
+      btn.textContent = item;
+      btn.onclick = () => {
+        if (store.has(item)) { store.delete(item); btn.classList.remove('active'); }
+        else { store.add(item); btn.classList.add('active'); }
+        updateBadge();
+        scheduleFilter();
+      };
+      container.appendChild(btn);
+    });
+  }
+  buildChips('rating-chips', RATINGS, activeRatings);
+  buildChips('genre-chips',  GENRES,  activeGenres);
+
+  // ── Type ───────────────────────────────────────────────────────────────────
+  function setType(type, el) {
+    activeType = type;
+    document.querySelectorAll('.type-btn').forEach(b => b.classList.remove('active'));
+    el.classList.add('active');
+    updateBadge();
+    scheduleFilter();
+  }
+
+  // ── Debounce filter ────────────────────────────────────────────────────────
+  function scheduleFilter() {
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(applyClientFilters, 150);
+  }
+
+  // ── Badge ──────────────────────────────────────────────────────────────────
+  function updateBadge() {
+    let count = activeGenres.size + activeRatings.size;
+    if (activeType !== 'all') count++;
+    if (document.getElementById('year-min').value) count++;
+    if (document.getElementById('year-max').value) count++;
+    if (document.getElementById('f-director').value.trim()) count++;
+    if (document.getElementById('f-cast').value.trim()) count++;
+    if (document.getElementById('f-country').value.trim()) count++;
+    const badge = document.getElementById('filter-badge');
+    if (count > 0) { badge.textContent = count; badge.style.display = ''; }
+    else badge.style.display = 'none';
+  }
+
+  // ── Clear ──────────────────────────────────────────────────────────────────
+  function clearFilters() {
+    activeType = 'all';
+    activeGenres.clear();
+    activeRatings.clear();
+    document.querySelectorAll('.type-btn').forEach(b => b.classList.remove('active'));
+    document.querySelector('[data-type="all"]').classList.add('active');
+    document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+    ['year-min','year-max','f-director','f-cast','f-country'].forEach(id => {
+      document.getElementById(id).value = '';
+    });
+    updateBadge();
+    applyClientFilters();
+  }
+
+  // Text filter debounce
+  ['year-min','year-max','f-director','f-cast','f-country'].forEach(id => {
+    document.getElementById(id).addEventListener('input', () => {
+      updateBadge();
+      scheduleFilter();
+    });
+  });
+
+  // ── Match ──────────────────────────────────────────────────────────────────
+  function matchesFilters(item) {
+    const yearMin  = parseInt(document.getElementById('year-min').value) || 0;
+    const yearMax  = parseInt(document.getElementById('year-max').value) || 9999;
+    const dirQ     = document.getElementById('f-director').value.trim().toLowerCase();
+    const castQ    = document.getElementById('f-cast').value.trim().toLowerCase();
+    const countryQ = document.getElementById('f-country').value.trim().toLowerCase();
+
+    if (activeType !== 'all' && item.type !== activeType) return false;
+    if (item.release_year < yearMin || item.release_year > yearMax) return false;
+    if (dirQ && !item.director.toLowerCase().includes(dirQ)) return false;
+    if (castQ && !item.cast.toLowerCase().includes(castQ)) return false;
+    if (countryQ && !item.country.toLowerCase().includes(countryQ)) return false;
+    if (activeRatings.size > 0 && !activeRatings.has(item.rating)) return false;
+    if (activeGenres.size > 0) {
+      const itemGenres = item.genres.split(',').map(g => g.trim());
+      if (![...activeGenres].some(g => itemGenres.includes(g))) return false;
+    }
+    return true;
+  }
+
+  // ── Filter & render ────────────────────────────────────────────────────────
+  function applyClientFilters() {
+    const source   = isSearchMode ? lastResults : allTitles;
+    const filtered = source.filter(matchesFilters);
+    renderResults(filtered);
+    const total    = isSearchMode ? lastResults.length : allTitles.length;
+    document.getElementById('status').textContent =
+      filtered.length === total
+        ? `${filtered.length} titles`
+        : `Showing ${filtered.length} of ${total} titles`;
+  }
+
+  // ── Render ─────────────────────────────────────────────────────────────────
+  function pct(v) { return Math.round(v * 100); }
+
+  function renderResults(items) {
+    const el = document.getElementById('results');
+    el.innerHTML = '';
+
+    if (items.length === 0) {
+      el.innerHTML = '<div class="empty">No titles found. Try adjusting your filters.</div>';
+      return;
+    }
+
+    // Cap browse mode at 100 for performance
+    const display = isSearchMode ? items : items.slice(0, 100);
+
+    display.forEach((item, i) => {
+      const genres  = item.genres.split(',').slice(0, 2).join(', ');
+      const card    = document.createElement('div');
+      card.className = 'card';
+      card.style.animationDelay = `${Math.min(i, 20) * 30}ms`;
+
+      const scoreBars = isSearchMode ? `
+        <div class="score-breakdown">
+          <div class="score-row">
+            <span class="score-label">Overall</span>
+            <div class="score-track"><div class="score-fill fill-overall" style="width:${pct(item.score)}%"></div></div>
+            <span class="score-pct">${pct(item.score)}%</span>
+          </div>
+          <div class="score-row">
+            <span class="score-label">Theme</span>
+            <div class="score-track"><div class="score-fill fill-desc" style="width:${pct(item.score_description)}%"></div></div>
+            <span class="score-pct">${pct(item.score_description)}%</span>
+          </div>
+          <div class="score-row">
+            <span class="score-label">Genre</span>
+            <div class="score-track"><div class="score-fill fill-genres" style="width:${pct(item.score_genres)}%"></div></div>
+            <span class="score-pct">${pct(item.score_genres)}%</span>
+          </div>
+          <div class="score-row">
+            <span class="score-label">Director</span>
+            <div class="score-track"><div class="score-fill fill-director" style="width:${pct(item.score_director)}%"></div></div>
+            <span class="score-pct">${pct(item.score_director)}%</span>
+          </div>
+          <div class="score-row">
+            <span class="score-label">Cast</span>
+            <div class="score-track"><div class="score-fill fill-cast" style="width:${pct(item.score_cast)}%"></div></div>
+            <span class="score-pct">${pct(item.score_cast)}%</span>
+          </div>
+        </div>` : '';
+
+      card.innerHTML = `
+        <div class="card-rank">${String(i + 1).padStart(2,'0')}</div>
+        <div class="card-body">
+          <div class="card-title">${esc(item.title)}</div>
+          <div class="card-meta">
+            <span class="tag tag-type">${esc(item.type)}</span>
+            <span class="tag tag-rating">${esc(item.rating)}</span>
+            <span class="tag tag-genre">${esc(genres)}</span>
+            ${item.release_year ? `<span class="tag tag-year">${item.release_year}</span>` : ''}
+            ${item.country ? `<span class="tag-country">${esc(item.country.split(',')[0].trim())}</span>` : ''}
+          </div>
+          <div class="card-desc">${esc(item.description)}</div>
+          ${scoreBars}
+        </div>
+      `;
+      el.appendChild(card);
+    });
+
+    if (!isSearchMode && items.length > 100) {
+      const note = document.createElement('div');
+      note.style.cssText = 'text-align:center;color:#555;font-size:0.75rem;padding:1.5rem;';
+      note.textContent = `Showing 100 of ${items.length} — search to narrow down`;
+      el.appendChild(note);
+    }
+  }
+
+  // ── Search ─────────────────────────────────────────────────────────────────
+  const queryEl  = document.getElementById('query');
+  const submitEl = document.getElementById('submit');
+  const statusEl = document.getElementById('status');
+  const parsedBox = document.getElementById('parsed-box');
+
+  function setQuery(el) { queryEl.value = el.textContent; queryEl.focus(); }
+
+  function showParsed(p) {
+    const set = (id, val) => {
+      const el = document.getElementById(id);
+      if (val && val.trim()) { el.textContent = val; el.classList.remove('empty'); }
+      else { el.textContent = 'not specified'; el.classList.add('empty'); }
+    };
+    set('p-desc', p.description_intent);
+    set('p-genres', p.genres);
+    set('p-director', p.director);
+    set('p-cast', p.cast);
+    parsedBox.style.display = 'block';
+  }
+
+  async function search() {
+    const q = queryEl.value.trim();
+    if (!q) return;
+
+    submitEl.disabled = true;
+    document.getElementById('results').innerHTML = '';
+    parsedBox.style.display = 'none';
+    lastResults = [];
+    isSearchMode = true;
+    statusEl.innerHTML = '<span class="spinner"></span> Searching…';
+
+    try {
+      const res = await fetch('/recommend', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ query: q }),
+      });
+
+      if (!res.ok) {
+        const err = await res.json();
+        statusEl.textContent = `Error: ${err.detail}`;
+        return;
+      }
+
+      const data = await res.json();
+      showParsed(data.parsed_query);
+      lastResults = data.results;
+      applyClientFilters();
+
+    } catch(e) {
+      statusEl.textContent = 'Network error. Is the server running?';
+    } finally {
+      submitEl.disabled = false;
+    }
+  }
+
+  function esc(str) {
+    return String(str)
+      .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+      .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  submitEl.addEventListener('click', search);
+  queryEl.addEventListener('keydown', e => { if (e.key === 'Enter') search(); });
+
+  // Clicking clear also resets search mode
+  const origClear = clearFilters;
+</script>
+</body>
+</html>
