@@ -5,6 +5,7 @@ A content-based movie and TV show recommender built on the Netflix dataset (~8,8
 ---
 
 ## Quick Start
+Download `netflix_data.csv` and place it in the project root.
 
 ```bash
 docker build -t movie-recommender .
@@ -59,9 +60,9 @@ flowchart TD
 ```
 
 **Data flow:**
-1. On startup, `preprocess.py` cleans the CSV — removes duplicates, normalizes genres, caps cast lists to 5 names
+1. `preprocess.py` cleans the CSV: removes duplicates, normalizes genres, caps cast lists to 5 names
 2. Each title is embedded as **4 separate vectors** (description, genres, director, cast) using `text-embedding-3-small` and cached to disk
-3. On search, `gpt-4o-mini` parses the user's free-form query into structured fields: `description_intent`, `genres`, `director`, `cast`
+3. `gpt-4o-mini` parses the user's free-form query into structured fields: `description_intent`, `genres`, `director`, `cast`
 4. Each field is embedded independently and scored via cosine similarity against its matching matrix
 5. Final score = weighted sum across all 4 fields — director/cast matches are never drowned out by generic description similarity
 6. Top 10 results returned with per-field score breakdown
